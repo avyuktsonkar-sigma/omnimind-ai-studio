@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OmniMind - Multimodal AI Studio</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="app-layout">
+    <!-- Sidebar / Modality Selector -->
+    <aside class="sidebar">
+        <div class="brand">
+            <span class="brand-icon">🔮</span>
+            <h2>Omni<span class="gradient-text">Mind</span></h2>
+        </div>
+        <p class="brand-sub">Unified Multimodal AI</p>
+
+        <nav class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('nlp')">
+                <span class="icon">💬</span> NLP & Reasoning
+            </button>
+            <button class="tab-btn" onclick="switchTab('vision')">
+                <span class="icon">👁️</span> Computer Vision
+            </button>
+            <button class="tab-btn" onclick="switchTab('voice')">
+                <span class="icon">🎙️</span> Voice Intelligence
+            </button>
+            <button class="tab-btn" onclick="switchTab('genai')">
+                <span class="icon">🎨</span> Generative Canvas
+            </button>
+        </nav>
+
+        <div class="engine-status">
+            <div class="status-indicator">● ALL 4 ENGINES ONLINE</div>
+            <div class="status-specs">Latency: 18ms | Edge v3.2</div>
+        </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main class="workspace">
+        
+        <!-- 1. NLP & REASONING MODALITY -->
+        <section id="tab-nlp" class="modality-panel active">
+            <div class="panel-title">
+                <h2>💬 Natural Language Processing & Sentiment Engine</h2>
+                <p>Multi-task text comprehension, emotion polarity, and summarization.</p>
+            </div>
+            
+            <div class="card">
+                <label>Enter Query / Passage for Cognitive Processing:</label>
+                <textarea id="nlpInput" rows="4" placeholder="Type or paste any text (e.g. 'Our team developed an outstanding machine learning pipeline, but high GPU memory consumption remains a critical bottleneck.')."></textarea>
+                
+                <div class="action-row">
+                    <button class="btn-primary" onclick="runNLPInference()">⚡ Run NLP Analysis</button>
+                    <button class="btn-ghost" onclick="loadSampleNLP()">Load Sample Text</button>
+                </div>
+
+                <div id="nlpResult" class="result-card hidden">
+                    <div class="metrics-row">
+                        <div class="kpi">
+                            <span class="kpi-label">Sentiment Polarity</span>
+                            <span class="kpi-val" id="nlpSentiment">Positive</span>
+                        </div>
+                        <div class="kpi">
+                            <span class="kpi-label">Complexity Index</span>
+                            <span class="kpi-val" id="nlpComplexity">Advanced</span>
+                        </div>
+                        <div class="kpi">
+                            <span class="kpi-label">Word Count</span>
+                            <span class="kpi-val" id="nlpWords">0</span>
+                        </div>
+                    </div>
+                    <div class="summary-box">
+                        <strong>AI Summary & Extraction:</strong>
+                        <p id="nlpSummary">...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. COMPUTER VISION MODALITY -->
+        <section id="tab-vision" class="modality-panel">
+            <div class="panel-title">
+                <h2>👁️ Computer Vision & Scene Parser</h2>
+                <p>Upload an image for instant feature extraction, object labeling, and color histogram parsing.</p>
+            </div>
+
+            <div class="card">
+                <div class="upload-area" onclick="document.getElementById('imageUpload').click()">
+                    <input type="file" id="imageUpload" accept="image/*" style="display:none" onchange="processImage(event)">
+                    <span style="font-size: 32px;">📷</span>
+                    <p>Click to Upload or Drag & Drop Any Photo</p>
+                    <span class="sub-hint">Supports JPEG, PNG, WebP</span>
+                </div>
+
+                <div id="visionResult" class="vision-grid hidden">
+                    <div class="image-preview-wrapper">
+                        <canvas id="visionCanvas"></canvas>
+                    </div>
+                    <div class="vision-analytics">
+                        <h4>🔍 Detected Visual Features</h4>
+                        <ul id="detectedLabels" class="tag-list"></ul>
+
+                        <h4 style="margin-top: 15px;">🎨 Dominant Palette & Lighting</h4>
+                        <div id="colorSwatches" class="palette-row"></div>
+                        <p id="visionVerdict" class="verdict-text"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. VOICE INTELLIGENCE MODALITY -->
+        <section id="tab-voice" class="modality-panel">
+            <div class="panel-title">
+                <h2>🎙️ Real-Time Voice Assistant (STT & TTS)</h2>
+                <p>Bidirectional speech interaction using native Web Speech Neural Engines.</p>
+            </div>
+
+            <div class="card center-content">
+                <div class="mic-circle" id="micBtn" onclick="toggleSpeechRecognition()">
+                    <span id="micIcon">🎤</span>
+                </div>
+                <h3 id="voiceStatus">Click Microphone & Speak</h3>
+                <p id="voiceTranscript" class="transcript-box">Awaiting audio input...</p>
+
+                <div class="voice-response-box" id="voiceAnswerBox" style="display:none;">
+                    <h4>🔊 OmniMind Voice Response:</h4>
+                    <p id="voiceAnswerText"></p>
+                    <button class="btn-ghost" onclick="repeatSpeech()">🔊 Replay Voice</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. GENERATIVE AI CANVAS MODALITY -->
+        <section id="tab-genai" class="modality-panel">
+            <div class="panel-title">
+                <h2>🎨 Generative Vector & Neural Art Engine</h2>
+                <p>Transform conceptual text prompts into algorithmic visual compositions.</p>
+            </div>
+
+            <div class="card">
+                <div class="form-row">
+                    <input type="text" id="genPrompt" placeholder="Describe a concept: e.g. 'Cyberpunk Neon City', 'Quantum Neural Mesh', 'Galaxy Vortex'">
+                    <button class="btn-primary" onclick="generateArt()">Synthesize</button>
+                </div>
+
+                <div class="canvas-container">
+                    <canvas id="genCanvas" width="700" height="350"></canvas>
+                </div>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
